@@ -1,0 +1,126 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens (Tailwind v4 `@theme`).
+ * Palette: the firm's logo burgundy + warm brown ink on a soft ivory, with a
+ * restrained antique-tan accent drawn from the logo lettering.
+ * Font family variables are provided by next/font (see layout.tsx).
+ */
+@theme {
+  --font-serif: var(--font-heading), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --color-wine-950: #2b0e0c;
+  --color-wine-900: #5c1d19;
+  --color-wine-800: #742621;
+  --color-wine-700: #8a3029;
+  --color-wine-600: #a23d34;
+
+  --color-ink: #2a211e;
+  --color-slate: #5b4f49;
+  --color-mist: #85776f;
+
+  --color-paper: #fcf9f5;
+  --color-cream: #f5eee5;
+  --color-line: #e8ddcf;
+
+  --color-gold-600: #8a6a43;
+  --color-gold-500: #a8865e;
+  --color-gold-400: #c7a87f;
+  --color-gold-100: #f2e8da;
+
+  --shadow-card: 0 1px 2px rgba(60, 22, 18, 0.04), 0 8px 24px rgba(60, 22, 18, 0.06);
+  --shadow-card-hover: 0 2px 4px rgba(60, 22, 18, 0.06), 0 16px 40px rgba(60, 22, 18, 0.1);
+}
+
+:root {
+  color-scheme: light;
+  --header-h: 4.5rem;
+  scroll-behavior: auto; /* Lenis owns smooth scrolling; avoid double-smoothing. */
+}
+
+/*
+ * Base element styles live in `@layer base` so Tailwind's color/font utilities
+ * (which sit in the later `utilities` layer) can override them. Without this,
+ * these unlayered element rules would beat every utility — e.g. `text-paper`
+ * on a heading would be ignored and render as burgundy.
+ */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    line-height: 1.65;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-serif);
+    color: var(--color-wine-900);
+    letter-spacing: -0.01em;
+    line-height: 1.12;
+  }
+}
+
+/* Accessible, always-visible focus ring for keyboard users. */
+:focus-visible {
+  outline: 2px solid var(--color-gold-600);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Lenis: allow native scroll while JS boots; class is added once initialized. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/*
+ * Reveal primitive initial state. GSAP animates elements from this state to
+ * visible. Under prefers-reduced-motion we force the visible state so nothing
+ * can ever remain stuck hidden if JS is disabled or motion is turned off.
+ */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  will-change: opacity, transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    will-change: auto;
+  }
+  html {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* No-JS safety: if scripts can't run, the reveal can never fire, so never hide. */
+@media (scripting: none) {
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Utility: subtle top-border accent used on cards and bands. */
+.accent-rule {
+  background: linear-gradient(90deg, var(--color-gold-500), var(--color-gold-400));
+}
